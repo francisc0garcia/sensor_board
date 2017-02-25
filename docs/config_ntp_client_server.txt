@@ -1,0 +1,78 @@
+----- useful commands -----------------------------------------------------------------------------
+- restart ntp service
+sudo service ntp restart
+
+- change manually date
+sudo date --set "25 Sep 2013 15:00:00"
+
+- change ntp config file
+sudo nano /etc/ntp.conf
+
+- update time in client
+sudo ntpdate -s 192.168.0.210
+
+----- For master: ---------------------------------------------------------------------------------
+
+driftfile /var/lib/ntp/ntp.drift
+
+statistics loopstats peerstats clockstats
+filegen loopstats file loopstats type day enable
+filegen peerstats file peerstats type day enable
+filegen clockstats file clockstats type day enable
+
+# Specify one or more NTP servers.
+server  127.127.1.0     # local clock
+fudge   127.127.1.0 stratum 10
+
+pool 0.ubuntu.pool.ntp.org iburst
+pool 1.ubuntu.pool.ntp.org iburst
+pool 2.ubuntu.pool.ntp.org iburst
+pool 3.ubuntu.pool.ntp.org iburst
+
+# Use Ubuntu's ntp server as a fallback.
+pool ntp.ubuntu.com
+
+# By default, exchange time with everybody, but don't allow configuration.
+restrict -4 default kod notrap nomodify nopeer noquery limited
+#restrict -6 default kod notrap nomodify nopeer noquery limited
+
+# Local users may interrogate the ntp server more closely.
+restrict 127.0.0.1
+restrict ::1
+
+# Needed for adding pool entries
+restrict source notrap nomodify noquery
+
+broadcastdelay  0.008
+restrict 192.168.0.210 mask 255.255.0.0 nomodify notrap
+
+
+---- For slave: -----------------------------------------------------------------------------------
+
+# /etc/ntp.conf, configuration for ntpd; see ntp.conf(5) for help
+
+driftfile /var/lib/ntp/ntp.drift
+
+statistics loopstats peerstats clockstats
+filegen loopstats file loopstats type day enable
+filegen peerstats file peerstats type day enable
+filegen clockstats file clockstats type day enable
+
+# Specify one or more NTP servers.
+server  127.127.1.0     # local clock
+fudge   127.127.1.0 stratum 10
+server 192.168.0.210
+
+multicastclient                 # listen on default 224.0.1.1
+broadcastdelay  0.008
+
+# By default, exchange time with everybody, but don't allow configuration.
+restrict -4 default kod notrap nomodify nopeer noquery limited
+restrict -6 default kod notrap nomodify nopeer noquery limited
+
+# Local users may interrogate the ntp server more closely.
+restrict 127.0.0.1
+restrict ::1
+
+# Needed for adding pool entries
+restrict source notrap nomodify noquery

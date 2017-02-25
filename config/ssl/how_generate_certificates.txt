@@ -1,0 +1,12 @@
+Generate SSL nodejs
+
+openssl genrsa -des3 -out server.enc.key 1024
+openssl req -new -key server.enc.key -out server.csr
+openssl rsa -in server.enc.key -out server.key
+openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+
+Generate SSL rosbridge
+
+openssl genrsa -out server_key.pem 2048
+openssl req -new -key server_key.pem -out server_csr.pem
+openssl x509 -req -days 1825 -in server_csr.pem -signkey server_key.pem -out server_cert.pem

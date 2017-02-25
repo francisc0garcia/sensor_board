@@ -1,0 +1,12 @@
+<launch>
+
+    <!-- Play rosbag -->
+    <arg name="path" default="$(find sensor_board)/data/" />
+    <arg name="file" default="Testshieldcompleted3.bag" />
+    <node pkg="rosbag" type="play" name="player" output="screen" args="--clock $(arg path)$(arg file)"/>
+
+    <!-- open RVIZ interface -->
+    <node name="rviz" pkg="rviz" type="rviz"
+          args="-d $(find sensor_board)/config/rviz_final_imu_gps_camera.rviz"  />
+
+</launch>

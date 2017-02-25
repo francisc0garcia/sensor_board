@@ -1,0 +1,49 @@
+<launch>
+
+    <!--  start image streaming -->
+    <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+        <param name="video_device" value="/dev/video0" />
+        <param name="image_width" value="320" />
+        <param name="image_height" value="240" />
+        <param name="pixel_format" value="yuyv" />
+        <param name="camera_frame_id" value="usb_cam" />
+        <param name="io_method" value="mmap"/>
+    </node>
+
+    <node pkg="sensor_board" type="sensor_imu_publisher.py" name="sensor_imu_publisher" required="true" output="screen" >
+        <param name="offset_pitch" value="0" />
+        <param name="offset_roll" value="0" />
+        <param name="offset_yaw" value="0" />
+        <param name="rate" value="150" />
+    </node>
+
+    # Launch requirements
+    <node pkg="sensor_board" type="load_requirements.sh" name="load_requirements"  output="screen" />
+
+    # Start ros bridge server
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" >
+        <arg name="port" value="9090"/>
+        <arg name="ssl" default="true" />
+        <arg name="authenticate" default="false" />
+        <arg name="certfile" default="/home/ubuntu/Documents/code/node-login/app/server/ssl/server_cert.pem"/>
+        <arg name="keyfile" default="/home/ubuntu/Documents/code/node-login/app/server/ssl/server_key.pem" />
+    </include>
+
+    # create a web_video_server
+    <node pkg="web_video_server" type="web_video_server" name="web_video_server" required="false"  output="screen" >
+        <param name="width" value="320" />
+        <param name="height" value="240" />
+        <param name="quality" value="60" />
+        <param name="invert" value="" />
+    </node>
+
+    # Launch nodeJS app
+    <node pkg="sensor_board" type="launch_node_js_app.sh" name="load_node_js"   output="screen" />
+
+    # launch bag recorder node
+    <node pkg="sensor_board" type="storage_bag_recorder.py" name="storage_bag_recorder" required="false" output="screen" >
+        <param name="default_folder" value="$(find sensor_board)/data/" />
+        <param name="rate" value="100" />
+    </node>
+
+</launch>

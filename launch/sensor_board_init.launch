@@ -1,0 +1,38 @@
+<launch>
+    # Start ros bridge server
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch" >
+        <arg name="port" value="9090"/>
+    </include>
+
+    # create a web_video_server
+    <node pkg="web_video_server" type="web_video_server" name="web_video_server" required="false" />
+
+    <!-- start image streaming (Not working?)
+    <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+        <param name="video_device" value="/dev/video1" />
+        <param name="image_width" value="640" />
+        <param name="image_height" value="480" />
+        <param name="pixel_format" value="yuyv" />
+        <param name="camera_frame_id" value="usb_cam" />
+        <param name="io_method" value="mmap"/>
+    </node>
+    -->
+
+    <node pkg="cv_camera" type="cv_camera_node" name="cv_camera_node">
+        <param name="frame_id" value="camera1" />
+        <param name="device_id" value="1" />
+        <param name="rate" value="20.0" />
+        <param name="image_width" value="640" />
+        <param name="image_height" value="480" />
+    </node>
+
+
+    # Start node js app
+    <node  name="shell_node_js" pkg="sensor_board"  type="launch_node_js_app.sh" required="false" />
+
+    <node name="rviz" pkg="rviz" type="rviz"
+          args="-d $(find sensor_board)/config/rviz_config.rviz"  />
+
+    <node name="custom_rqt_perspective" pkg="rqt_gui" type="rqt_gui"
+          args="--perspective-file  $(find sensor_board)/config/sensor_board.perspective" required="false" />
+</launch>

@@ -1,0 +1,6 @@
+Token https://www.mapbox.com:
+
+http://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=pk.eyJ1IjoiZnJhbmNpc2MwZ2FyY2lhIiwiYSI6ImNpemg1cDdiczAwMTIyd245OHJmMjgyeDAifQ.5W8LrvRDooubk8tMXsDvtw
+
+viewer:
+https://github.com/gareth-cross/rviz_satellite
